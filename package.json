@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --watch app.js"
+    "dev": "node --watch app.js",
+    "dbMigrate": "npx prisma migrate dev",
+    "dbClient": "npx prisma generate"
   },
   "keywords": [],
   "author": "",

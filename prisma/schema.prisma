@@ -11,3 +11,41 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id       Int       @id @default(autoincrement())
+  username String    @unique
+  email    String    @unique
+  hash     String
+  salt     String
+  role     Role      @default(USER)
+  comments Comment[]
+  posts    Post[]
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  publicId  String    @unique @default(nanoid())
+  title     String
+  content   Json
+  postedAt  DateTime  @default(now())
+  published Boolean   @default(false)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  comments  Comment[]
+}
+
+model Comment {
+  id       Int      @id @default(autoincrement())
+  content  Json
+  postedAt DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   Int
+  post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   Int
+}
+
+enum Role {
+  USER
+  AUTHOR
+}
