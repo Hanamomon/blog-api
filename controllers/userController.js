@@ -9,7 +9,7 @@ export async function postUser(req, res) {
 
   const user = await createUser({ username, email, hash, salt });
 
-  res.status(200).json(user);
+  return res.status(201).json(user);
 }
 
 export async function logUser(req, res) {
@@ -18,7 +18,7 @@ export async function logUser(req, res) {
   
   jwt.sign(user, secret, { expiresIn: '1d' }, (err, token) => {
     if (err) {
-      return res.status(403).json({ error: err.message });
+      return res.status(401).json({ error: err.message });
     }
     
     res.status(200).json(token);
