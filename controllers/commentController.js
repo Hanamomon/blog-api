@@ -1,19 +1,23 @@
 import { findPostComments, findSinglePostComment, createComment, updatePostComment, removePostComment } from "../repository/commentRepository.js";
 
 export async function getComments(req, res) {
-  const comments = await findPostComments(req.params.postId);
+  const { postId } = req.params;
+  const comments = await findPostComments(postId);
 
   res.status(200).json(comments);
 }
 
 export async function getCommentById(req, res) {
-  const comment = await findSinglePostComment(req.params.postId, Number(req.params.commentId));
+  const { postId, commentId } = req.params;
+  const comment = await findSinglePostComment(postId, Number(commentId));
 
   res.status(200).json(comment);
 }
 
 export async function postComment(req, res) {
-  const { userId, postId, content } = req.body;
+  const userId = req.user.id;
+  const { postId } = req.params;
+  const { content } = req.body;
 
   const comment = await createComment({ userId, postId, content });
 
@@ -21,17 +25,22 @@ export async function postComment(req, res) {
 }
 
 export async function putComment(req, res) {
-  const { userId, postId, commentId, content } = req.body;
+  const userId = req.user.id;
+  const { postId, commentId } = req.params;
+  const commentIdInt = Number(commentId);
+  const { content } = req.body;
 
-  const comment = await updatePostComment({ userId, postId, commentId, content });
+  const comment = await updatePostComment({ userId, postId, commentIdInt, content });
 
   res.status(200).json(comment);
 }
 
 export async function deleteComment(req, res) {
-  const { userId, postId, commentId } = req.body;
+  const userId = req.user.id;
+  const { postId, commentId } = req.params;
+  const commentIdInt = Number(commentId);
 
-  const comment = await removePostComment({ userId, postId, commentId });
+  const comment = await removePostComment({ userId, postId, commentIdInt });
 
   res.status(204).json(comment);
 }
