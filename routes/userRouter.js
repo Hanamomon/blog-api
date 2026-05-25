@@ -8,6 +8,6 @@ router.post('/sign-up', postUser);
 
 router.post('/login', passport.authenticate('local', { session: false }), logUser);
 
-router.patch('/:userId', passport.authenticate('jwt', { session: false }), patchRole);
+router.patch('/', passport.authenticate('jwt', { session: false }), validateRole, validatorMiddleware, patchRole);
 
 export default router;
