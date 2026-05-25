@@ -1,4 +1,4 @@
-import { findPostComments, findSinglePostComment, createComment, updatePostComment, removePostComment } from "../repository/commentRepository.js";
+import { findPostComments, findSinglePostComment, findCommentRelationInfo, createComment, updatePostComment, removePostComment } from "../repository/commentRepository.js";
 import { matchedData } from "express-validator";
 
 export async function getComments(req, res) {
@@ -35,11 +35,18 @@ export async function putComment(req, res) {
 }
 
 export async function deleteComment(req, res) {
-  const userId = req.user.id;
+  const { userId, role } = req.user;
   const { postId, commentId } = matchedData(req);
   const commentIdInt = Number(commentId);
 
-  const comment = await removePostComment({ userId, postId, commentId: commentIdInt });
+  const comment = await findCommentRelationInfo(commentIdInt);
+  const canDelete = (comment.userId === userId || comment.post.userId === userId && role === "AUTHOR");
 
-  res.status(204).json(comment);
+  if (canDelete) {
+    const deletedComment = await removePostComment(commentIdInt);
+
+    return res.status(204).json(deletedComment);
+  }
+
+  res.status(403).json({ error: { msg: 'Missing permissions to delete comment.' } });
 }

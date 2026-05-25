@@ -73,14 +73,28 @@ export async function updatePostComment({ userId, postId, commentId, content }) 
   return comment;
 }
 
-export async function removePostComment({ userId, postId, commentId }) {
+export async function findCommentRelationInfo(commentId) {
+  const comment = await prisma.comment.findUnique({
+    where: {
+      id: commentId,
+    },
+    select: {
+      userId: true,
+      post: {
+        select: {
+          userId: true,
+        },
+      },
+    },
+  });
+
+  return comment;
+}
+
+export async function removePostComment(commentId) {
   const comment = await prisma.comment.delete({
     where: {
       id: commentId,
-      post: {
-        publicId: postId,
-      },
-      userId,
     },
   });
 
