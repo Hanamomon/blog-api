@@ -53,9 +53,12 @@ export async function updatePost({ userId, postId, title, content}) {
       content,
     },
     where: {
-      userId,
       publicId: postId,
-    }
+      user: {
+        id: userId,
+        role: "AUTHOR",
+      },
+    },
   });
 
   return post;
@@ -81,8 +84,11 @@ export async function setPublish({ userId, postId, published }) {
 export async function removePost(userId, postId) {
   const post = await prisma.post.delete({
     where: {
-      userId,
       publicId: postId,
+      user: {
+        id: userId,
+        role: "AUTHOR",
+      },
     },
   });
 

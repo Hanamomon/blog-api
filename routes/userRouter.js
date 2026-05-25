@@ -6,8 +6,8 @@ const router = Router();
 
 router.post('/sign-up', postUser);
 
-router.post('/login', passport.authenticate('local', { session: false, failureRedirect: '/login' }), logUser);
+router.post('/login', passport.authenticate('local', { session: false }), logUser);
 
-router.patch('/:userId', passport.authenticate('jwt', { session: false, failureRedirect: '/login' }), patchRole);
+router.patch('/:userId', passport.authenticate('jwt', { session: false }), patchRole);
 
 export default router;
