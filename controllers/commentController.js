@@ -30,7 +30,7 @@ export async function putComment(req, res) {
   const commentIdInt = Number(commentId);
   const { content } = req.body;
 
-  const comment = await updatePostComment({ userId, postId, commentIdInt, content });
+  const comment = await updatePostComment({ userId, postId, commentId: commentIdInt, content });
 
   res.status(200).json(comment);
 }
@@ -40,7 +40,7 @@ export async function deleteComment(req, res) {
   const { postId, commentId } = req.params;
   const commentIdInt = Number(commentId);
 
-  const comment = await removePostComment({ userId, postId, commentIdInt });
+  const comment = await removePostComment({ userId, postId, commentId: commentIdInt });
 
   res.status(204).json(comment);
 }
