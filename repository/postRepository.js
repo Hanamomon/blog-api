@@ -24,6 +24,17 @@ export async function findUserPosts(userId) {
   return posts;
 }
 
+export async function findSingleUserPost(postId, userId) {
+  const post = await prisma.post.findUnique({
+    where: {
+      publicId: postId,
+      userId,
+    },
+  });
+
+  return post; 
+}
+
 export async function findSinglePost(postId) {
   const post = await prisma.post.findUnique({
     where: {
@@ -65,7 +76,7 @@ export async function updatePost({ userId, postId, title, content}) {
 }
 
 export async function setPublish({ userId, postId, published }) {
-  const result = await prisma.post.updateMany({
+  const result = await prisma.post.update({
     data: {
       published,
     },

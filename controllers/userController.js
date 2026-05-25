@@ -1,9 +1,10 @@
 import { findUserById, createUser, assignRole } from '../repository/userRepository.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { matchedData } from 'express-validator';
 
 export async function postUser(req, res) {
-  const { username, email, password } = req.body;
+  const { username, email, password, confirmPassword } = matchedData(req);
   const salt = await bcrypt.genSalt();
   const hash = await bcrypt.hash(password, salt);
 
@@ -27,7 +28,7 @@ export async function logUser(req, res) {
 
 export async function patchRole(req, res) {
   const userId = req.user.id;
-  const { role } = req.body;
+  const { role } = matchedData(req);
   
   const user = await assignRole({ userId, role });
 
