@@ -17,7 +17,11 @@ router.post('/login', validateLogin, validatorMiddleware,
       next();
     })(req, res, next);
   }
-  , logUser);
+, logUser);
+
+router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.status(200).json(req.user);
+})
 
 router.patch('/', passport.authenticate('jwt', { session: false }), validateRole, validatorMiddleware, patchRole);
 
