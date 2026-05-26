@@ -3,8 +3,11 @@ import postRouter from './routes/postRouter.js';
 import userRouter from './routes/userRouter.js';
 import errorHandler from './middlewares/errorMiddleware.js';
 import AppError from './helpers/appError.js';
+import cors from 'cors';
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 
