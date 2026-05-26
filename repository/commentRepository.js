@@ -1,5 +1,17 @@
 import { prisma } from "../lib/prisma.js";
 
+const commentSelect = {
+  id: true,
+  content: true,
+  postedAt: true,
+  user: {
+    select: {
+      username: true,
+      id: true,
+    }
+  }
+}
+
 export async function findPostComments(postId) {
   const comments = await prisma.comment.findMany({
     where: {
@@ -7,6 +19,7 @@ export async function findPostComments(postId) {
         publicId: postId,
       }
     },
+    select: commentSelect,
   });
   
   return comments;
@@ -20,6 +33,7 @@ export async function findSinglePostComment(postId, commentId) {
         publicId: postId,
       },
     },
+    select: commentSelect,
   });
 
   return comment;
@@ -31,6 +45,7 @@ export async function findUserComment(userId, commentId) {
       id: commentId,
       userId,
     },
+    select: commentSelect,
   });
 
   return comment; 
@@ -51,6 +66,7 @@ export async function createComment({ userId, postId, content }) {
         },
       },
     },
+    select: commentSelect,
   });
 
   return comment;
@@ -68,6 +84,7 @@ export async function updatePostComment({ userId, postId, commentId, content }) 
         publicId: postId,
       },
     },
+    select: commentSelect,
   });
 
   return comment;
@@ -96,6 +113,7 @@ export async function removePostComment(commentId) {
     where: {
       id: commentId,
     },
+    select: commentSelect,
   });
 
   return comment;
