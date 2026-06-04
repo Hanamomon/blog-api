@@ -35,7 +35,7 @@ export async function putComment(req, res) {
 }
 
 export async function deleteComment(req, res) {
-  const { userId, role } = req.user;
+  const { id: userId, role } = req.user;
   const { postId, commentId } = matchedData(req);
   const commentIdInt = Number(commentId);
 
