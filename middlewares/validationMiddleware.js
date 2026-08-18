@@ -1,7 +1,22 @@
 import { body, param, validationResult } from "express-validator";
-import { findUserByUsername, findUserByEmail } from "../repository/userRepository.js";
-import { findSinglePost, findSingleUserPost } from "../repository/postRepository.js";
-import { findPostComments, findSinglePostComment, findUserComment } from "../repository/commentRepository.js";
+import { JSDOM } from "jsdom";
+import DOMPurify from "dompurify";
+import {
+  findUserByUsername,
+  findUserByEmail,
+} from "../repository/userRepository.js";
+import {
+  findSinglePost,
+  findSingleUserPost,
+} from "../repository/postRepository.js";
+import {
+  findPostComments,
+  findSinglePostComment,
+  findUserComment,
+} from "../repository/commentRepository.js";
+
+const window = new JSDOM("").window;
+const purify = DOMPurify(window);
 
 async function validatorMiddleware(req, res, next) {
   const errors = validationResult(req);
@@ -72,13 +87,49 @@ const validatePostId = [
 ];
 
 const validateAddPost = [
-  body('title')
+  body("title")
     .trim()
-    .notEmpty().withMessage('Enter a title.').bail()
-    .isAlphanumeric('fr-FR', { ignore: ' ' }).withMessage('Title should contain letters and numbers only.'),
-  body('content')
-    .notEmpty().withMessage('Post content cannot be empty.').bail()
-    .isObject().withMessage('Content should be in JSON.')
+    .notEmpty()
+    .withMessage("Enter a title.")
+    .bail()
+    .isAlphanumeric("fr-FR", { ignore: " " })
+    .withMessage("Title should contain letters and numbers only."),
+  body("content")
+    .notEmpty()
+    .withMessage("Post content cannot be empty.")
+    .bail()
+    .custom((postContent) => {
+      const clean = purify.sanitize(postContent, {
+        ALLOWED_TAGS: [
+          "p",
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          "ul",
+          "li",
+          "span",
+          "div",
+          "pre",
+          "strong",
+          "em",
+          "sup",
+          "sub",
+          "code",
+          "tbody",
+          "tr",
+          "td",
+          "hr",
+          "br",
+          "img",
+        ],
+        ALLOWED_ATTR: ["style"],
+      });
+
+      return true;
+    }),
 ];
 
 const validateUserPost = [
