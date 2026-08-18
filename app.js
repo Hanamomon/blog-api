@@ -7,7 +7,12 @@ import cors from 'cors';
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.API_URL,
+    optionsSuccessStatus: 200,
+  }),
+);
 
 app.use(express.json());
 
