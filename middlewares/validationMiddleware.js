@@ -118,11 +118,21 @@ const validateAddComment = [
 ];
 
 const validateUserComment = [
-  param('commentId')
+  param("postId").custom(async (postId, { req }) => {
+    const authorPost = await findSingleUserPost(postId, req.user.id);
+    req._isAuthorPost = false;
+
+    if (authorPost && req.user.role == "AUTHOR") {
+      req._isAuthorPost = true;
+      return true;
+    }
+  }),
+  param("commentId")
+    .if((value, { req }) => !req._isAuthorPost)
     .custom(async (commentId, { req }) => {
       const userComment = await findUserComment(req.user.id, Number(commentId));
       if (!userComment)
-        throw new Error('This comment does not belong to the user.');
+        throw new Error("This comment does not belong to the user.");
     }),
 ];
 

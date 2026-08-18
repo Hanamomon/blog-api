@@ -79,7 +79,17 @@ export async function updatePostComment({ userId, postId, commentId, content }) 
     },
     where: {
       id: commentId,
-      userId,
+      OR: [
+        { userId },
+        {
+          post: {
+            userId,
+            user: {
+              role: "AUTHOR",
+            },
+          },
+        },
+      ],
       post: {
         publicId: postId,
       },
