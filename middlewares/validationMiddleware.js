@@ -112,9 +112,18 @@ const validatePostCommentId = [
 
 const validateAddComment = [
   validatePostId,
-  body('content')
-    .notEmpty().withMessage('Comment content cannot be empty.').bail()
-    .isObject().withMessage('Content should be in JSON.')
+  body("content")
+    .notEmpty()
+    .withMessage("Comment content cannot be empty.")
+    .bail()
+    .isObject()
+    .custom((value) => {
+      if (typeof value.text !== "string" || !value.text)
+        throw new Error(
+          "Comment content should include a valid non-empty text.",
+        );
+      return true;
+    }),
 ];
 
 const validateUserComment = [
