@@ -1,4 +1,12 @@
-import { findPosts, findSinglePost, createPost, updatePost, setPublish, removePost } from "../repository/postRepository.js";
+import {
+  findPosts,
+  findSinglePost,
+  findUserPosts,
+  createPost,
+  updatePost,
+  setPublish,
+  removePost,
+} from "../repository/postRepository.js";
 import { matchedData } from "express-validator";
 
 export async function getPosts(req, res) {
@@ -12,6 +20,13 @@ export async function getPostById(req, res) {
   const post = await findSinglePost(postId);
 
   res.status(200).json(post);
+}
+
+export async function getAuthorPosts(req, res) {
+  const userId = req.user.id;
+  const posts = await findUserPosts(userId);
+
+  res.status(200).json(posts);
 }
 
 export async function postPost(req, res) {

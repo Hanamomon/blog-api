@@ -1,6 +1,14 @@
 import { Router } from "express";
-import commentRouter from './commentRouter.js';
-import { getPosts, getPostById, postPost, putPost, patchPostPublish, deletePost } from "../controllers/postController.js";
+import commentRouter from "./commentRouter.js";
+import {
+  getPosts,
+  getPostById,
+  getAuthorPosts,
+  postPost,
+  putPost,
+  patchPostPublish,
+  deletePost,
+} from "../controllers/postController.js";
 import { passport } from "../lib/passport.js";
 import { validatorMiddleware, validatePostId, validateAddPost, validateUserPost, validateEditPost, validatePublishPost } from "../middlewares/validationMiddleware.js";
 import { isAuthor } from "../middlewares/authorMiddleware.js";
@@ -8,7 +16,14 @@ const router = Router();
 
 router.get('/', getPosts);
 
-router.use('/:postId/comments', commentRouter);
+router.get(
+  "/author",
+  passport.authenticate("jwt", { session: false }),
+  isAuthor,
+  getAuthorPosts,
+);
+
+router.use("/:postId/comments", commentRouter);
 
 router.get('/:postId', validatePostId, validatorMiddleware, getPostById);
 

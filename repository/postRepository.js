@@ -19,17 +19,22 @@ export async function findPosts() {
 }
 
 export async function findUserPosts(userId) {
-  const posts = await prisma.user.findMany({
+  const users = await prisma.user.findMany({
     where: {
       id: userId,
       role: "AUTHOR",
     },
-    include: {
-      posts: true,
-    }
+    select: {
+      posts: {
+        select: {
+          ...postSelect,
+          published: true,
+        },
+      },
+    },
   });
 
-  return posts;
+  return users[0].posts;
 }
 
 export async function findSingleUserPost(postId, userId) {
