@@ -28,62 +28,66 @@ async function validatorMiddleware(req, res, next) {
 }
 
 const validateSignUp = [
-  body('username')
+  body("username")
     .trim()
-    .notEmpty().withMessage('Username is required.').bail()
+    .notEmpty()
+    .withMessage("Username is required.")
+    .bail()
     .isAlphanumeric()
-    .isLength({ max: 30 }).withMessage('Username cannot exceed 30 characters.')
-    .custom(async value => {
+    .isLength({ max: 30 })
+    .withMessage("Username cannot exceed 30 characters.")
+    .custom(async (value) => {
       const user = await findUserByUsername(value);
-      if (user)
-        throw new Error('Username is taken.');
+      if (user) throw new Error("Username is taken.");
     }),
-  body('email')
-    .isEmail().withMessage('Valid email is required.').bail()
-    .isLength({ max: 100 }).withMessage('Email cannot exceed 100 characters.').bail()
+  body("email")
+    .isEmail()
+    .withMessage("Valid email is required.")
+    .bail()
+    .isLength({ max: 100 })
+    .withMessage("Email cannot exceed 100 characters.")
+    .bail()
     .normalizeEmail()
-    .custom(async value => {
+    .custom(async (value) => {
       const user = await findUserByEmail(value);
-      if (user)
-        throw new Error('An account is associated with this email.');
+      if (user) throw new Error("An account is associated with this email.");
     }),
-  body('password')
-    .isStrongPassword().withMessage('Valid password contains a minimum of 8 characters and at least one lowercase letter, one uppercase letter, one number, and one symbol.'),
-  body('confirmPassword')
-    .custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error('Passwords do not match.');
-      }
-      return true;
-    }),
+  body("password")
+    .isStrongPassword()
+    .withMessage(
+      "Valid password contains a minimum of 8 characters and at least one lowercase letter, one uppercase letter, one number, and one symbol.",
+    ),
+  body("confirmPassword").custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error("Passwords do not match.");
+    }
+    return true;
+  }),
 ];
 
 const validateLogin = [
-  body('username')
+  body("username")
     .trim()
-    .notEmpty().withMessage('Username is required.').bail()
+    .notEmpty()
+    .withMessage("Username is required.")
+    .bail()
     .isAlphanumeric()
-    .custom(async value => {
+    .custom(async (value) => {
       const user = await findUserByUsername(value);
-      if (!user)
-        throw new Error('No user with this username exists.');
+      if (!user) throw new Error("No user with this username exists.");
     }),
-  body('password')
-    .notEmpty().withMessage('Password is required.'),
+  body("password").notEmpty().withMessage("Password is required."),
 ];
 
 const validateRole = [
-  body('role')
-    .isIn(["USER", "AUTHOR"]).withMessage('Invalid role provided.'),
+  body("role").isIn(["USER", "AUTHOR"]).withMessage("Invalid role provided."),
 ];
 
 const validatePostId = [
-  param('postId')
-    .custom(async value => {
-      const post = await findSinglePost(value);
-      if (!post)
-        throw new Error('Provided post address is invalid.');
-    }),
+  param("postId").custom(async (value) => {
+    const post = await findSinglePost(value);
+    if (!post) throw new Error("Provided post address is invalid.");
+  }),
 ];
 
 const validateAddPost = [
@@ -133,32 +137,28 @@ const validateAddPost = [
 ];
 
 const validateUserPost = [
-  param('postId')
-    .custom(async (postId, { req }) => {
-      const userPost = await findSingleUserPost(postId, req.user.id);
-      if (!userPost)
-        throw new Error('This post does not belong to the user.');
-    }),
+  param("postId").custom(async (postId, { req }) => {
+    const userPost = await findSingleUserPost(postId, req.user.id);
+    if (!userPost) throw new Error("This post does not belong to the user.");
+  }),
 ];
 
-const validateEditPost = [
-  validateUserPost,
-  validateAddPost,
-];
+const validateEditPost = [validateUserPost, validateAddPost];
 
 const validatePublishPost = [
   validateUserPost,
-  body('published')
-    .isBoolean().withMessage('Invalid published state.'),
+  body("published").isBoolean().withMessage("Invalid published state."),
 ];
 
 const validatePostCommentId = [
-  param('commentId')
-    .custom(async (commentId, { req }) => {
-      const postComment = await findSinglePostComment(req.params.postId, Number(commentId));
-      if (!postComment)
-        throw new Error('This comment does not belong to the specified post.');
-    }),
+  param("commentId").custom(async (commentId, { req }) => {
+    const postComment = await findSinglePostComment(
+      req.params.postId,
+      Number(commentId),
+    );
+    if (!postComment)
+      throw new Error("This comment does not belong to the specified post.");
+  }),
 ];
 
 const validateAddComment = [
@@ -196,17 +196,20 @@ const validateUserComment = [
     }),
 ];
 
-const validateEditComment = [
-  validateUserComment,
-  validateAddComment
-];
+const validateEditComment = [validateUserComment, validateAddComment];
 
 export {
   validatorMiddleware,
-  validateSignUp, validateLogin, validateRole,
-  validatePostId, validatePostCommentId,
-  validateAddPost, validateAddComment,
-  validateUserPost, validateUserComment,
-  validateEditPost, validateEditComment,
-  validatePublishPost
-}
+  validateSignUp,
+  validateLogin,
+  validateRole,
+  validatePostId,
+  validatePostCommentId,
+  validateAddPost,
+  validateAddComment,
+  validateUserPost,
+  validateUserComment,
+  validateEditPost,
+  validateEditComment,
+  validatePublishPost,
+};

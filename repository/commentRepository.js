@@ -8,20 +8,20 @@ const commentSelect = {
     select: {
       username: true,
       id: true,
-    }
-  }
-}
+    },
+  },
+};
 
 export async function findPostComments(postId) {
   const comments = await prisma.comment.findMany({
     where: {
       post: {
         publicId: postId,
-      }
+      },
     },
     select: commentSelect,
   });
-  
+
   return comments;
 }
 
@@ -48,7 +48,7 @@ export async function findUserComment(userId, commentId) {
     select: commentSelect,
   });
 
-  return comment; 
+  return comment;
 }
 
 export async function createComment({ userId, postId, content }) {
@@ -72,7 +72,12 @@ export async function createComment({ userId, postId, content }) {
   return comment;
 }
 
-export async function updatePostComment({ userId, postId, commentId, content }) {
+export async function updatePostComment({
+  userId,
+  postId,
+  commentId,
+  content,
+}) {
   const comment = await prisma.comment.update({
     data: {
       content,

@@ -14,7 +14,7 @@ export async function findPosts() {
     },
     select: postSelect,
   });
-  
+
   return posts;
 }
 
@@ -46,9 +46,9 @@ export async function findSingleUserPost(postId, userId) {
     select: postSelect,
   });
 
-  return post; 
+  return post;
 }
-// Add select statemtns to filter and clean up query results from sensitive data
+
 export async function findSinglePost(postId) {
   const post = await prisma.post.findUnique({
     where: {
@@ -60,7 +60,7 @@ export async function findSinglePost(postId) {
   return post;
 }
 
-export async function createPost({ userId, title, content}) {
+export async function createPost({ userId, title, content }) {
   const post = await prisma.post.create({
     data: {
       userId,
@@ -73,7 +73,7 @@ export async function createPost({ userId, title, content}) {
   return post;
 }
 
-export async function updatePost({ userId, postId, title, content}) {
+export async function updatePost({ userId, postId, title, content }) {
   const post = await prisma.post.update({
     data: {
       title,
