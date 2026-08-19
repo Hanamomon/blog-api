@@ -9,7 +9,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.API_URL,
+    origin: [process.env.CLIENT_URL, process.env.AUTHOR_CLIENT_URL],
     optionsSuccessStatus: 200,
   }),
 );
